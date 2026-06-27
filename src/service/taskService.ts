@@ -20,14 +20,13 @@ export const getTaskById = async (id: number) => {
 export const updateTask = async (id: number, data: any) => {
   const task = await taskRepository.updateTask(id, data);
   emit("task:updated",task);
-    console.log("Socket Update emitted", task);
   return task;
 };
 
 export const deleteTask = async (id: number) => {
   const task = await taskRepository.deleteTask(id);
-    console.log("Socket delete emitted", task);
   emit("task:deleted",task)
+  return task;
 };
 
 const emit = (event: string, data: unknown) => {
