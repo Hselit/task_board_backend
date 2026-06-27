@@ -4,7 +4,8 @@ import {Server} from 'socket.io';
 
 import app from "./src/app";
 import { prisma } from './src/utils/prisma';
-import { registerSocketHandlers } from "./src/utils/socket";
+import { registerSocketHandlers } from "./src/socket/socket";
+import { setSocketServer } from './src/socket/socketService';
 
 
 const server = http.createServer(app);
@@ -18,6 +19,8 @@ export const io = new Server(
     },
   }
 );
+
+setSocketServer(io);
 
 registerSocketHandlers(io);
 

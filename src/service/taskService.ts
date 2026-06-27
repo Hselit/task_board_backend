@@ -1,7 +1,13 @@
 import * as taskRepository from "../repository/taskRepository";
 
+import { getSocketServer } from "../socket/socketService";
+
+
 export const createTask = async (data: any) => {
-  return await taskRepository.createTask(data);
+  const task = await taskRepository.createTask(data);
+   emit("task:created", task);
+
+  return task;
 };
 
 export const getAllTasks = async () => {
@@ -18,4 +24,8 @@ export const updateTask = async (id: number, data: any) => {
 
 export const deleteTask = async (id: number) => {
   return await taskRepository.deleteTask(id);
+};
+
+const emit = (event: string, data: unknown) => {
+  getSocketServer().emit(event, data);
 };
