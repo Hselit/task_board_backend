@@ -53,15 +53,40 @@ export const getTaskById = async (id: number) => {
   });
 };
 
-export const updateTask = async (id: number, data: any) => {
-  return await prisma.card.update({
-    where: {
-      id,
-    },
-    data,
-    include: {
-      list: true,
-    },
+export const updateTask = async (
+  id: number,
+  data: any
+) => {
+  return prisma.$transaction(async (tx) => {
+    const task = await tx.card.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (task.version !== data.version) {
+      throw new Error("VERSION_CONFLICT");
+    }
+
+    return tx.card.update({
+      where: {
+        id,
+      },
+      data: {
+        name: data.name,
+        description: data.description,
+        version: {
+          increment: 1,
+        },
+      },
+      include: {
+        list: true,
+      },
+    });
   });
 };
 

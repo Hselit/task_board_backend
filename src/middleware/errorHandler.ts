@@ -26,6 +26,13 @@ export const errorHandler = (
     });
   }
 
+  if (err instanceof Error && err.message === "VERSION_CONFLICT") {
+    return res.status(409).json({
+      success: false,
+      message: "This task has already been modified by another user.",
+    });
+  }
+
   console.error(err);
 
   return res.status(500).json({
