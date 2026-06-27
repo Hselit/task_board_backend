@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-
 import { ZodObject } from "zod";
 
-export const validate = <T extends ZodObject>(schema: T) => {
+export const validate = (schema: ZodObject) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse({
       body: req.body,
@@ -11,10 +10,16 @@ export const validate = <T extends ZodObject>(schema: T) => {
     });
 
     if (!result.success) {
-      console.log(result.error);
-      return res.status(400).json(result.error.flatten());
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: result.error.issues.map((issue: { path: any[]; message: any; }) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
     }
-    Object.assign(req, result.data);
+
     next();
   };
 };
