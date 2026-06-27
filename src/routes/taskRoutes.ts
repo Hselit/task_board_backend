@@ -1,17 +1,18 @@
 import { Router } from "express";
 import { validate } from "../middleware/validator";
 import { createTask, getAllTasks, deleteTask, updateTask,getTaskById } from "../controller/taskController";
+import { createTaskSchema, deleteTaskSchema, getTaskSchema, updateTaskSchema } from "../schema/task.schema"
 
 const router = Router();
 
 router.get("/", getAllTasks);
 
-router.get("/:id", validate(), getTaskById);
+router.post("/", validate(createTaskSchema), createTask);
 
-router.post("/", validate(), createTask);
+router.get("/:id", validate(getTaskSchema), getTaskById);
 
-router.put("/:id", validate(), updateTask);
+router.put("/:id", validate(updateTaskSchema), updateTask);
 
-router.delete("/:id", validate(), deleteTask);
+router.delete("/:id", validate(deleteTaskSchema), deleteTask);
 
 export default router;
